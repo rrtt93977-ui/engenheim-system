@@ -250,7 +250,7 @@ The system currently uses **hardcoded credentials stored in `localStorage`**. Th
 - Sidebar links: Admin Dashboard, Call Center (active)
 
 ---
-
+   
 ### 5.6 `search-companies.html` — Company Search Engine
 - **Access:** Not protected (no auth check in JavaScript)
 - **Title:** "نظام البحث عن الشركات - Engenheim System" (Company Search System)

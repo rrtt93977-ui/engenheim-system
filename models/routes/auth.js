@@ -1,29 +1,26 @@
-const router = require('express').Router();
-const User = require('../User');
+﻿const router = require('express').Router();
+const User = require('../user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { authMiddleware, adminOnly } = require('../../middleware/auth');
 
-const JWT_SECRET = 'your_jwt_secret_key_here'; // مفتاح سري مؤقت للتشفير
-
-// 1. تسجيل حساب جديد (Register)
-router.post('/register', async (req, res) => {
+router.post('/register', authMiddleware, adminOnly, async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, username, email, password, role, target } = req.body;
         
-        // التحقق إذا المستخدم موجود مسبقاً
-        const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: 'المستخدم موجود مسبقاً' });
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) return res.status(400).json({ message: 'المستخدم أو الإيميل موجود مسبقاً' });
 
-        // تشفير كلمة المرور
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // إنشاء المستخدم الجديد
         const newUser = new User({
             name,
+            username,
             email,
             password: hashedPassword,
-            role: role || 'employee'
+            role: role || 'employee',
+            target: target || 20
         });
 
         const savedUser = await newUser.save();
@@ -33,31 +30,50 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// 2. تسجيل الدخول (Login)
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, username } = req.body;
 
-        // البحث عن المستخدم بالإيميل
-        const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ message: 'الإيميل أو كلمة المرور غير صحيحة' });
+        const user = await User.findOne(email ? { email } : { username });
+        if (!user) return res.status(400).json({ message: 'الحساب غير موجود' });
 
-        // مطابقة كلمة المرور المشفرة
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: 'الإيميل أو كلمة المرور غير صحيحة' });
+        if (!isMatch) return res.status(400).json({ message: 'كلمة المرور غير صحيحة' });
 
-        // إنشاء توكن (Token) يحتوي على الأيدي والصلاحية (admin أو employee)
-        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign(
+            { id: user._id, role: user.role, username: user.username }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '7d' }
+        );
 
         res.json({
             token,
             user: {
                 id: user._id,
                 name: user.name,
+                username: user.username,
                 email: user.email,
                 role: user.role
             }
         });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/me', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/employees', authMiddleware, async (req, res) => {
+    try {
+        const employees = await User.find({ role: 'employee' }).select('-password');
+        res.json(employees);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -54,6 +54,7 @@
         <ul class="sidebar-menu">
             <li><a href="dashboard.html">لوحة الأدمن الرئيسية</a></li>
             <li><a href="callcenter.html" class="active">نظام الكول سنتر</a></li>
+            <li><a href="search-companies.html">نظام البحث عن الشركات</a></li>
         </ul>
     </aside>
 
@@ -88,49 +89,68 @@
     </div>
 
     <script>
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
+        const token = localStorage.getItem('token');
+        if (!token) {
             alert('يرجى تسجيل الدخول أولاً!');
             window.location.href = 'index.html';
         }
 
-        async function loadCallCenterData() {
-            let res = await fetch('/api/companies');
-            let companies = await res.json();
-
-            let tbody = document.getElementById('callCenterTableBody');
-            if (companies.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#8a9990; padding:20px;">لا توجد شركات مسجلة في النظام حالياً.</td></tr>`;
-                return;
+        async function fetchWithAuth(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': Bearer 
+            };
+            const res = await fetch(url, options);
+            if (res.status === 401 || res.status === 403) {
+                alert('انتهت الجلسة، يرجى تسجيل الدخول');
+                logout();
+                throw new Error('Unauthorized');
             }
+            return res;
+        }
 
-            tbody.innerHTML = '';
-            companies.forEach(comp => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${comp.name}</strong></td>
-                        <td>${comp.phone}</td>
-                        <td>${comp.address}</td>
-                        <td><span style="color:#00ff66;">${comp.agent}</span></td>
-                        <td><span style="color:#00ff66; font-weight:bold;">${comp.callCount || 0} مكالمات</span></td>
-                        <td>
-                            <select class="table-select" onchange="updateStatus('${comp.id}', this.value)">
-                                <option value="NoDeal" ${comp.status === 'NoDeal' ? 'selected' : ''}>لم يتم الديل</option>
-                                <option value="Deal" ${comp.status === 'Deal' ? 'selected' : ''}>تم الديل (صفقة)</option>
-                                <option value="Meeting" ${comp.status === 'Meeting' ? 'selected' : ''}>محدد ميتينغ</option>
-                                <option value="Called" ${comp.status === 'Called' ? 'selected' : ''}>تم الاتصال فقط</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button class="call-btn" onclick="incrementCall('${comp.id}', ${comp.callCount || 0})">📞 تسجيل مكالمة</button>
-                            <button class="deal-btn" onclick="makeDeal('${comp.id}')">✅ ديل</button>
-                        </td>
-                    </tr>
-                `;
-            });
+        async function loadCallCenterData() {
+            try {
+                const res = await fetchWithAuth('/api/companies');
+                const companies = await res.json();
+
+                const tbody = document.getElementById('callCenterTableBody');
+                if (companies.length === 0) {
+                    tbody.innerHTML = <tr><td colspan="7" style="text-align:center; color:#8a9990; padding:20px;">لا توجد شركات مسجلة في النظام حالياً.</td></tr>;
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                companies.forEach(comp => {
+                    tbody.innerHTML += 
+                        <tr>
+                            <td><strong></strong></td>
+                            <td></td>
+                            <td></td>
+                            <td><span style="color:#00ff66;"></span></td>
+                            <td><span style="color:#00ff66; font-weight:bold;"> مكالمات</span></td>
+                            <td>
+                                <select class="table-select" onchange="updateStatus('', this.value)">
+                                    <option value="NoDeal" >لم يتم الديل</option>
+                                    <option value="Deal" >تم الديل (صفقة)</option>
+                                    <option value="Meeting" >محدد ميتينغ</option>
+                                    <option value="Called" >تم الاتصال فقط</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="call-btn" onclick="incrementCall('', )">📞 تسجيل مكالمة</button>
+                                <button class="deal-btn" onclick="makeDeal('')">✅ ديل</button>
+                            </td>
+                        </tr>
+                    ;
+                });
+            } catch (err) {
+                console.error('Error loading callcenter data:', err);
+            }
         }
 
         async function incrementCall(id, currentCount) {
-            await fetch(`/api/companies/${id}`, {
+            await fetchWithAuth(/api/companies/, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ callCount: currentCount + 1 })
@@ -139,7 +159,7 @@
         }
 
         async function makeDeal(id) {
-            await fetch(`/api/companies/${id}`, {
+            await fetchWithAuth(/api/companies/, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'Deal' })
@@ -148,7 +168,7 @@
         }
 
         async function updateStatus(id, newStatus) {
-            await fetch(`/api/companies/${id}`, {
+            await fetchWithAuth(/api/companies/, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })
@@ -156,12 +176,12 @@
             loadCallCenterData();
         }
 
-        loadCallCenterData();
-
         function logout() {
             localStorage.clear();
             window.location.href = 'index.html';
         }
+
+        loadCallCenterData();
     </script>
 </body>
 </html>

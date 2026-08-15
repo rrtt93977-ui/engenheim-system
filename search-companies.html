@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
         body { background-color: #0b0f0d; color: #e0e0e0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* القائمة الجانبية المتوافقة مع هويتك */
         .sidebar { width: 270px; background-color: #121815; border-left: 1px solid #1f2b24; display: flex; flex-direction: column; }
         .sidebar-brand { padding: 30px 20px; border-bottom: 1px solid #1f2b24; }
         .sidebar-brand h1 { color: #00ff66; font-size: 20px; }
@@ -18,7 +17,6 @@
         .sidebar-menu li a { display: block; padding: 14px 25px; color: #a0aec0; text-decoration: none; font-size: 14px; transition: 0.3s; }
         .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: #1f2b24; color: #00ff66; border-right: 3px solid #00ff66; }
 
-        /* المحتوى الرئيسي */
         .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .topbar { height: 75px; background-color: #121815; border-bottom: 1px solid #1f2b24; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
         .topbar h2 { font-size: 17px; color: #ffffff; }
@@ -26,23 +24,20 @@
 
         .content-area { padding: 30px; flex: 1; overflow-y: auto; }
         
-        /* صندوق البحث المتقدم */
         .search-container { background: #121815; padding: 20px; border-radius: 10px; border: 1px solid #1f2b24; margin-bottom: 25px; display: flex; gap: 15px; }
         .search-container input { flex: 1; background: #0b0f0d; border: 1px solid #1f2b24; padding: 12px 18px; border-radius: 6px; color: #fff; font-size: 14px; outline: none; }
         .search-container input:focus { border-color: #00ff66; }
         .search-container button { background: #00ff66; color: #0b0f0d; border: none; padding: 0 25px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .search-container button:hover { background: #00cc52; }
 
-        /* جدول النتائج */
         .results-table { width: 100%; background: #121815; border-radius: 10px; border-collapse: collapse; border: 1px solid #1f2b24; overflow: hidden; }
         .results-table th, .results-table td { padding: 15px 20px; text-align: right; border-bottom: 1px solid #1f2b24; font-size: 13.5px; }
         .results-table th { background: #18221c; color: #00ff66; font-weight: 700; }
         .results-table tr:hover { background: #16201a; }
         
-        /* أزرار الإسناد للموظفين */
         .assign-select { background: #0b0f0d; color: #fff; border: 1px solid #1f2b24; padding: 8px 12px; border-radius: 6px; font-size: 12px; outline: none; cursor: pointer; }
-        .assign-btn { background: #2563eb; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .assign-btn:hover { background: #1d4ed8; }
+        .assign-btn { background: #00ff66; color: #0b0f0d; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .assign-btn:hover { background: #00cc52; }
         .badge-source { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
         .source-baghdad { background: #065f46; color: #34d399; }
         .source-social { background: #1e40af; color: #60a5fa; }
@@ -50,7 +45,6 @@
 </head>
 <body>
 
-    <!-- القائمة الجانبية -->
     <aside class="sidebar">
         <div class="sidebar-brand">
             <h1>Engenheim</h1>
@@ -63,7 +57,6 @@
         </ul>
     </aside>
 
-    <!-- واجهة العمل -->
     <div class="main-wrapper">
         <header class="topbar">
             <h2>نظام البحث الربطي (محرك الشركات الذكي)</h2>
@@ -83,43 +76,31 @@
                         <th>القطاع / النشاط</th>
                         <th>رقم الهاتف</th>
                         <th>العنوان</th>
-                        <th>المصدر (API)</th>
+                        <th>المصدر</th>
                         <th>إسناد لموظف</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <tr>
-                        <td>شركة النخيل للتمور العراقية</td>
+                    <tr id="row-1">
+                        <td><strong>شركة النخيل للتمور العراقية</strong></td>
                         <td>صناعات غذائية وتجارة</td>
                         <td>+964 770 123 4567</td>
                         <td>بغداد - الكرادة</td>
                         <td><span class="badge-source source-baghdad">دليل بغداد</span></td>
                         <td>
-                            <select class="assign-select" id="emp-1">
-                                <option value="أحمد">أحمد</option>
-                                <option value="عباس">عباس</option>
-                                <option value="أمير">أمير</option>
-                                <option value="شاهين">شاهين</option>
-                                <option value="موسى">موسى</option>
-                            </select>
-                            <button class="assign-btn" onclick="assignCompany('شركة النخيل للتمور العراقية', 'emp-1')">إسناد</button>
+                            <select class="assign-select emp-select" id="emp-select-1"></select>
+                            <button class="assign-btn" onclick="assignCompany('شركة النخيل للتمور العراقية', '+9647701234567', 'بغداد - الكرادة', 'emp-select-1', 'row-1')">إسناد وحفظ</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td>مؤسسة دجلة للتجارة العامة</td>
+                    <tr id="row-2">
+                        <td><strong>مؤسسة دجلة للتجارة العامة</strong></td>
                         <td>توريد عام وتسويق</td>
                         <td>+964 781 987 6543</td>
                         <td>بغداد - المنصور</td>
                         <td><span class="badge-source source-social">Instagram API</span></td>
                         <td>
-                            <select class="assign-select" id="emp-2">
-                                <option value="أحمد">أحمد</option>
-                                <option value="عباس">عباس</option>
-                                <option value="أمير">أمير</option>
-                                <option value="شاهين">شاهين</option>
-                                <option value="موسى">موسى</option>
-                            </select>
-                            <button class="assign-btn" onclick="assignCompany('مؤسسة دجلة للتجارة العامة', 'emp-2')">إسناد</button>
+                            <select class="assign-select emp-select" id="emp-select-2"></select>
+                            <button class="assign-btn" onclick="assignCompany('مؤسسة دجلة للتجارة العامة', '+9647819876543', 'بغداد - المنصور', 'emp-select-2', 'row-2')">إسناد وحفظ</button>
                         </td>
                     </tr>
                 </tbody>
@@ -128,53 +109,127 @@
     </div>
 
     <script>
-        // دالة الفلترة الفورية المحلية
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('يرجى تسجيل الدخول أولاً');
+            window.location.href = 'index.html';
+        }
+
+        let employeesList = [];
+
+        async function fetchWithAuth(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': Bearer 
+            };
+            const res = await fetch(url, options);
+            if (res.status === 401 || res.status === 403) {
+                alert('انتهت الجلسة');
+                window.location.href = 'index.html';
+            }
+            return res;
+        }
+
+        async function initEmployees() {
+            try {
+                const res = await fetchWithAuth('/api/auth/employees');
+                employeesList = await res.json();
+                populateAllSelects();
+            } catch (err) {
+                console.error('Error fetching employees:', err);
+            }
+        }
+
+        function populateAllSelects() {
+            const selects = document.querySelectorAll('.emp-select');
+            selects.forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">-- اختر موظف --</option>';
+                employeesList.forEach(emp => {
+                    select.innerHTML += <option value=""> ()</option>;
+                });
+                if (currentVal) select.value = currentVal;
+            });
+        }
+
         function filterCompanies() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
             for (let i = 0; i < rows.length; i++) {
-                let text = rows[i].textContent.toLowerCase();
+                const text = rows[i].textContent.toLowerCase();
                 rows[i].style.display = text.includes(input) ? "" : "none";
             }
         }
 
-        // محاكاة جلب بيانات حية من APIs الخارجية (مثل مواقع بغداد ومنصات التواصل) عند النقر
+        let customRowCount = 100;
         function fetchExternalAPIs() {
-            let query = document.getElementById('searchInput').value;
-            if(!query) {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
                 alert("يرجى كتابة كلمة مفتاحية للبحث (مثل: تمور، أطعمة، تقنية)");
                 return;
             }
             
-            // محاكاة استجابة من API خارجي وإضافتها للجدول ديناميكياً
-            let tbody = document.getElementById('tableBody');
-            let newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td>${query} (مستخرجة عبر API)</td>
+            customRowCount++;
+            const rowId = ow-;
+            const selectId = emp-select-;
+
+            const tbody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+            newRow.id = rowId;
+            newRow.innerHTML = 
+                <td><strong> (مستخرجة عبر المنصات)</strong></td>
                 <td>تجارة عامة / إعلان</td>
                 <td>+964 790 555 4433</td>
                 <td>بغداد - الرصافة</td>
-                <td><span class="badge-source source-social">Facebook/Instagram Graph API</span></td>
+                <td><span class="badge-source source-social">Graph API</span></td>
                 <td>
-                    <select class="assign-select" id="emp-new">
-                        <option value="أحمد">أحمد</option>
-                        <option value="عباس">عباس</option>
-                        <option value="أمير">أمير</option>
-                        <option value="شاهين">شاهين</option>
-                        <option value="موسى">موسى</option>
-                    </select>
-                    <button class="assign-btn" onclick="assignCompany('${query}', 'emp-new')">إسناد</button>
+                    <select class="assign-select emp-select" id=""></select>
+                    <button class="assign-btn" onclick="assignCompany('', '+9647905554433', 'بغداد - الرصافة', '', '')">إسناد وحفظ</button>
                 </td>
-            `;
+            ;
             tbody.prepend(newRow);
-            alert("تم جلب أحدث بيانات الشركات المطابقة من خوادم البحث ومنصات التواصل بنجاح!");
+            populateAllSelects();
+            alert("تم جلب أحدث بيانات الشركات المطابقة بنجاح!");
         }
 
-        // دالة إسناد الشركة للموظف المطلوب
-        function assignCompany(companyName, selectId) {
-            let employee = document.getElementById(selectId).value;
-            alert(`تم إسناد شركة "${companyName}" بنجاح إلى الموظف (${employee}) وتم تحديث السجل في النظام.`);
+        async function assignCompany(name, phone, address, selectId, rowId) {
+            const select = document.getElementById(selectId);
+            const agent = select ? select.value : '';
+
+            if (!agent) {
+                alert('يرجى اختيار الموظف أولاً قبل الإسناد!');
+                return;
+            }
+
+            try {
+                const res = await fetchWithAuth('/api/companies', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        address: address,
+                        agent: agent,
+                        status: 'NoDeal',
+                        callCount: 0
+                    })
+                });
+
+                if (res.ok) {
+                    alert(✅ تم حفظ شركة "" في قاعدة بيانات MongoDB وإسنادها للموظف () بنجاح!);
+                    const row = document.getElementById(rowId);
+                    if (row) {
+                        row.style.backgroundColor = '#17221a';
+                    }
+                } else {
+                    alert('فشل حفظ الشركة');
+                }
+            } catch (err) {
+                alert('حدث خطأ أثناء الاتصال بالسيرفر');
+            }
         }
+
+        initEmployees();
     </script>
 </body>
 </html>

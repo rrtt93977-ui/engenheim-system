@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -37,11 +37,11 @@
         
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) auto; gap: 15px; align-items: flex-end; }
         .input-group label { display: block; margin-bottom: 7px; color: #a3b8ac; font-size: 13px; }
-        .input-group input, .input-group select { width: 100%; padding: 11px 14px; background-color: #0b0f0d; border: 1px solid #233b2a; border-radius: 6px; color: #ffffff; font-size: 14px; }
-        .input-group input:focus, .input-group select:focus { outline: none; border-color: #00ff66; }
+        .input-group input, .input-group select, .form-control { width: 100%; padding: 11px 14px; background-color: #0b0f0d; border: 1px solid #233b2a; border-radius: 6px; color: #ffffff; font-size: 14px; }
+        .input-group input:focus, .input-group select:focus, .form-control:focus { outline: none; border-color: #00ff66; }
         
-        .btn-action { background-color: #00ff66; color: #0b0f0d; border: none; padding: 11px 24px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; height: 43px; width: 100%; }
-        .btn-action:hover { background-color: #00cc52; }
+        .btn-action, .btn-main { background-color: #00ff66; color: #0b0f0d; border: none; padding: 11px 24px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; height: 43px; }
+        .btn-action:hover, .btn-main:hover { background-color: #00cc52; }
 
         table { width: 100%; border-collapse: collapse; text-align: right; margin-top: 5px; }
         th, td { padding: 14px 16px; border-bottom: 1px solid #1f3324; font-size: 13.5px; }
@@ -60,33 +60,7 @@
     </style>
 </head>
 <body>
-<!-- نظام تحليل الرسالة النصية الذكي وإضافتها للموظف -->
-<section class="section-box" style="border-top: 3px solid #00ff66; margin-top: 25px;">
-    <h4>🤖 تحليل الرسالة النصية وإضافة الشركة وإسنادها للموظف</h4>
-    <p style="color: #8a9990; font-size: 13.5px; margin-bottom: 12px;">
-        الصق نص الرسالة الكامل هنا، وسيتم استخراج الاسم والعنوان والملاحظة تلقائياً:
-    </p>
-    
-    <div style="margin-bottom: 15px;">
-        <textarea id="smartTextInput" rows="3" class="form-control" placeholder="الصق نص الرسالة هنا..." style="resize: vertical;"></textarea>
-        <button onclick="analyzeSmartText()" class="btn-main" style="margin-top: 10px;">تحليل النص واستخراج البيانات 🔍</button>
-    </div>
 
-    <table id="smartResultsTable" style="display: none; margin-top: 15px;">
-        <thead>
-            <tr>
-                <th>اسم الشركة</th>
-                <th>العنوان</th>
-                <th>الملاحظة</th>
-                <th>رقم الهاتف</th>
-                <th>حساب الانستقرام</th>
-                <th>الموظف المسؤول (مثل EMB1)</th>
-                <th>إجراء</th>
-            </tr>
-        </thead>
-        <tbody id="smartResultsBody"></tbody>
-    </table>
-</section>
     <aside class="sidebar">
         <div class="sidebar-brand">
             <h1>Engenheim</h1>
@@ -103,12 +77,13 @@
         <header class="topbar">
             <h2>لوحة التحكم المركزية - الأدمن</h2>
             <div class="topbar-actions">
-                <span class="user-badge">👑 المدير العام (Admin)</span>
+                <span class="user-badge" id="adminUserBadge">👑 المدير العام (Admin)</span>
                 <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
             </div>
         </header>
 
         <main class="content-container">
+            <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-box">
                     <span>إجمالي الشركات</span>
@@ -132,6 +107,34 @@
                 </div>
             </div>
 
+            <!-- Smart Text Parser -->
+            <section class="section-box" style="border-top: 3px solid #00ff66;">
+                <h4>🤖 تحليل الرسالة النصية الذكي وإضافتها للموظف</h4>
+                <p style="color: #8a9990; font-size: 13.5px; margin-bottom: 12px;">
+                    الصق نص الرسالة الكامل هنا، وسيتم استخراج الاسم والعنوان والملاحظة تلقائياً:
+                </p>
+                <div style="margin-bottom: 15px;">
+                    <textarea id="smartTextInput" rows="3" class="form-control" placeholder="الصق نص الرسالة هنا..." style="resize: vertical;"></textarea>
+                    <button onclick="analyzeSmartText()" class="btn-main" style="margin-top: 10px;">تحليل النص واستخراج البيانات 🔍</button>
+                </div>
+
+                <table id="smartResultsTable" style="display: none; margin-top: 15px;">
+                    <thead>
+                        <tr>
+                            <th>اسم الشركة</th>
+                            <th>العنوان</th>
+                            <th>الملاحظة</th>
+                            <th>رقم الهاتف</th>
+                            <th>حساب الانستقرام</th>
+                            <th>الموظف المسؤول</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="smartResultsBody"></tbody>
+                </table>
+            </section>
+
+            <!-- Add Company Form -->
             <section class="section-box">
                 <h4>➕ إضافة شركة جديدة وتعيينها لموظف مسؤول</h4>
                 <form id="addCompanyForm" onsubmit="saveCompany(event)">
@@ -166,25 +169,26 @@
                 </form>
             </section>
 
+            <!-- Employees Table -->
             <section class="section-box">
-                <h4>👥 إدارة حسابات الموظفين الـ 5 وتتبع الصفقات والنسب</h4>
+                <h4>👥 إدارة حسابات الموظفين وتتبع الصفقات والتارجت</h4>
                 <table>
                     <thead>
                         <tr>
-                            <th>الموظف (Username)</th>
-                            <th>كلمة المرور</th>
+                            <th>اسم الموظف</th>
+                            <th>اسم المستخدم (Username)</th>
                             <th>التارجت المطلوب</th>
                             <th>الصفقات المحققة</th>
                             <th>نسبة الإنجاز</th>
-                            <th>حفظ التعديل</th>
                         </tr>
                     </thead>
                     <tbody id="employeesTableBody"></tbody>
                 </table>
             </section>
 
+            <!-- Companies List -->
             <section class="section-box">
-                <h4>📋 قائمة الشركات المسجلة في النظام</h4>
+                <h4>📋 قائمة الشركات المسجلة في النظام (قاعدة بيانات MongoDB)</h4>
                 <table>
                     <thead>
                         <tr>
@@ -204,115 +208,105 @@
     </div>
 
     <script>
-        
-        if (localStorage.getItem('isLoggedIn') !== 'true' || localStorage.getItem('userRole') !== 'admin') {
+        const token = localStorage.getItem('token');
+        if (!token || localStorage.getItem('userRole') !== 'admin') {
             alert('غير مسموح بالدخول، يرجى تسجيل الدخول كأدمن!');
             window.location.href = 'index.html';
         }
 
-        const defaultEmps = [
-            { username: 'emp1', pass: '1234', target: 20 },
-            { username: 'emp2', pass: '1234', target: 20 },
-            { username: 'emp3', pass: '1234', target: 25 },
-            { username: 'emp4', pass: '1234', target: 15 },
-            { username: 'emp5', pass: '1234', target: 30 }
-        ];
+        let employeesList = [];
 
-        function getStoredEmps() {
-            let emps = JSON.parse(localStorage.getItem('ingenheim_employees'));
-            if (!emps) {
-                emps = defaultEmps;
-                localStorage.setItem('ingenheim_employees', JSON.stringify(emps));
+        async function fetchWithAuth(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': Bearer 
+            };
+            const res = await fetch(url, options);
+            if (res.status === 401 || res.status === 403) {
+                alert('انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول');
+                logout();
+                throw new Error('Unauthorized');
             }
-            return emps;
+            return res;
         }
 
         async function loadAdminData() {
-            let emps = getStoredEmps();
-            
-            // جلب الشركات من السيرفر
-            let res = await fetch('/api/companies');
-            let companies = await res.json();
+            try {
+                // 1. Fetch Employees
+                const empRes = await fetchWithAuth('/api/auth/employees');
+                employeesList = await empRes.json();
 
-            // حساب الإحصائيات العامة
-            document.getElementById('totalCompanies').textContent = companies.length;
-            let deals = 0, nodeals = 0, meetings = 0, calls = 0;
-            companies.forEach(c => {
-                if (c.status === 'Deal') deals++;
-                if (c.status === 'NoDeal') nodeals++;
-                if (c.status === 'Meeting') meetings++;
-                calls += (c.callCount || 0);
-            });
-            document.getElementById('dealsDone').textContent = deals;
-            document.getElementById('dealsFailed').textContent = nodeals;
-            document.getElementById('totalMeetings').textContent = meetings;
-            document.getElementById('weekCalls').textContent = calls;
+                // 2. Fetch Companies
+                const compRes = await fetchWithAuth('/api/companies');
+                const companies = await compRes.json();
 
-            // تعبئة قائمة الموظفين بقائمة اختيار إضافة الشركة
-            let agentSelect = document.getElementById('compAgent');
-            agentSelect.innerHTML = '';
-            emps.forEach(emp => {
-                agentSelect.innerHTML += `<option value="${emp.username}">${emp.username}</option>`;
-            });
+                // Calculate Stats
+                document.getElementById('totalCompanies').textContent = companies.length;
+                let deals = 0, nodeals = 0, meetings = 0, calls = 0;
+                companies.forEach(c => {
+                    if (c.status === 'Deal') deals++;
+                    if (c.status === 'NoDeal') nodeals++;
+                    if (c.status === 'Meeting') meetings++;
+                    calls += (c.callCount || 0);
+                });
+                document.getElementById('dealsDone').textContent = deals;
+                document.getElementById('dealsFailed').textContent = nodeals;
+                document.getElementById('totalMeetings').textContent = meetings;
+                document.getElementById('weekCalls').textContent = calls;
 
-            // تعبئة جدول إدارة حسابات الموظفين الـ 5 وتارجتهم
-            let empTbody = document.getElementById('employeesTableBody');
-            empTbody.innerHTML = '';
-            emps.forEach((emp, index) => {
-                let empDealsCount = companies.filter(c => c.agent === emp.username && c.status === 'Deal').length;
-                let target = emp.target > 0 ? emp.target : 1;
-                let percentage = Math.min(Math.round((empDealsCount / target) * 100), 100);
+                // Populate Employee Select
+                const agentSelect = document.getElementById('compAgent');
+                agentSelect.innerHTML = '<option value="">-- اختر موظف --</option>';
+                employeesList.forEach(emp => {
+                    agentSelect.innerHTML += <option value=""> ()</option>;
+                });
 
-                empTbody.innerHTML += `
-                    <tr>
-                        <td><strong>${emp.username}</strong></td>
-                        <td><input type="text" id="pass_${index}" value="${emp.pass}" class="table-input" style="width:110px;"></td>
-                        <td><input type="number" id="target_${index}" value="${emp.target}" class="table-input" style="width:90px;"></td>
-                        <td><span style="color:#00ff66; font-weight:bold; font-size:15px;">${empDealsCount} صفقات</span></td>
-                        <td>
-                            <span>${percentage}%</span>
-                            <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${percentage}%;"></div></div>
-                        </td>
-                        <td><button onclick="updateEmp(${index})" class="update-btn">تحديث</button></td>
-                    </tr>
-                `;
-            });
+                // Populate Employees Table
+                const empTbody = document.getElementById('employeesTableBody');
+                empTbody.innerHTML = '';
+                employeesList.forEach(emp => {
+                    const empDealsCount = companies.filter(c => c.agent === emp.username && c.status === 'Deal').length;
+                    const target = emp.target > 0 ? emp.target : 1;
+                    const percentage = Math.min(Math.round((empDealsCount / target) * 100), 100);
 
-            // تعبئة جدول الشركات المسجلة
-            let compTbody = document.getElementById('companiesTableBody');
-            if (companies.length === 0) {
-                compTbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#8a9990; padding:20px;">لا توجد شركات مسجلة حالياً.</td></tr>`;
-                return;
+                    empTbody.innerHTML += 
+                        <tr>
+                            <td><strong></strong></td>
+                            <td><span style="color:#a3b8ac;"></span></td>
+                            <td></td>
+                            <td><span style="color:#00ff66; font-weight:bold; font-size:15px;"> صفقات</span></td>
+                            <td>
+                                <span>%</span>
+                                <div class="progress-bar-container"><div class="progress-bar-fill" style="width: %;"></div></div>
+                            </td>
+                        </tr>
+                    ;
+                });
+
+                // Populate Companies Table
+                const compTbody = document.getElementById('companiesTableBody');
+                if (companies.length === 0) {
+                    compTbody.innerHTML = <tr><td colspan="7" style="text-align:center; color:#8a9990; padding:20px;">لا توجد شركات مسجلة حالياً في قاعدة البيانات.</td></tr>;
+                    return;
+                }
+
+                compTbody.innerHTML = '';
+                companies.forEach((comp) => {
+                    compTbody.innerHTML += 
+                        <tr>
+                            <td><strong></strong></td>
+                            <td></td>
+                            <td></td>
+                            <td style="color:; font-weight:bold;"></td>
+                            <td><span style="color:#00ff66;"></span></td>
+                            <td></td>
+                            <td><button class="del-btn" onclick="deleteCompany('')">حذف</button></td>
+                        </tr>
+                    ;
+                });
+            } catch (err) {
+                console.error('Error loading admin data:', err);
             }
-
-            compTbody.innerHTML = '';
-            companies.forEach((comp) => {
-                compTbody.innerHTML += `
-                    <tr>
-                        <td><strong>${comp.name}</strong></td>
-                        <td>${comp.phone}</td>
-                        <td>${comp.address}</td>
-                        <td style="color:${comp.status === 'Deal' ? '#00ff66' : '#a3b8ac'}; font-weight:bold;">${comp.status}</td>
-                        <td><span style="color:#00ff66;">${comp.agent}</span></td>
-                        <td>${comp.callCount || 0}</td>
-                        <td><button class="del-btn" onclick="deleteCompany('${comp.id}')">حذف</button></td>
-                    </tr>
-                `;
-            });
-        }
-        
-
-        function updateEmp(index) {
-            let emps = getStoredEmps();
-            let newPass = document.getElementById(`pass_${index}`).value;
-            let newTarget = document.getElementById(`target_${index}`).value;
-
-            emps[index].pass = newPass;
-            emps[index].target = parseInt(newTarget) || 0;
-
-            localStorage.setItem('ingenheim_employees', JSON.stringify(emps));
-            alert('تم تحديث بيانات الموظف والتارجت بنجاح!');
-            loadAdminData();
         }
 
         async function saveCompany(e) {
@@ -323,105 +317,108 @@
             const status = document.getElementById('compStatus').value;
             const agent = document.getElementById('compAgent').value;
 
-            await fetch('/api/companies', {
+            if (!agent) {
+                alert('يرجى اختيار الموظف المسند إليه!');
+                return;
+            }
+
+            const res = await fetchWithAuth('/api/companies', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, phone, address, status, agent, callCount: 0 })
             });
 
-            alert('تمت إضافة الشركة بنجاح وحفظها بالسيرفر وتوجيهها للموظف!');
-            document.getElementById('addCompanyForm').reset();
-            loadAdminData();
-        }
-
-        async function deleteCompany(id) {
-            if (confirm('هل أنت متأكد من حذف هذه الشركة نهائياً من النظام؟')) {
-                await fetch(`/api/companies/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert('تمت إضافة الشركة بنجاح وحفظها في قاعدة البيانات وتوجيهها للموظف!');
+                document.getElementById('addCompanyForm').reset();
                 loadAdminData();
+            } else {
+                alert('حدث خطأ أثناء حفظ الشركة');
             }
         }
 
-        loadAdminData();
+        async function deleteCompany(id) {
+            if (confirm('هل أنت متأكد من حذف هذه الشركة نهائياً من قاعدة البيانات؟')) {
+                const res = await fetchWithAuth(/api/companies/, { method: 'DELETE' });
+                if (res.ok) {
+                    loadAdminData();
+                } else {
+                    alert('فشل حذف الشركة');
+                }
+            }
+        }
+
+        function analyzeSmartText() {
+            const rawText = document.getElementById('smartTextInput').value.trim();
+            if (!rawText) {
+                alert('يرجى لصق نص الرسالة أولاً!');
+                return;
+            }
+
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            const extractedName = lines[0] || "شركة جديدة";
+            const extractedAddress = lines.find(l => l.includes('بغداد') || l.includes('اربيل') || l.includes('البصرة') || l.includes('عنوان')) || "العراق";
+            const extractedNote = rawText;
+
+            const empOptions = employeesList.map(e => <option value=""> ()</option>).join('');
+
+            const tbody = document.getElementById('smartResultsBody');
+            document.getElementById('smartResultsTable').style.display = 'table';
+
+            tbody.innerHTML = 
+                <tr>
+                    <td><input type="text" id="parsed-name" class="form-control" value=""></td>
+                    <td><input type="text" id="parsed-address" class="form-control" value=""></td>
+                    <td><input type="text" id="parsed-note" class="form-control" value=""></td>
+                    <td><input type="text" id="parsed-phone" class="form-control" placeholder="07xxxxxxxx"></td>
+                    <td><input type="text" id="parsed-insta" class="form-control" placeholder="@username"></td>
+                    <td><select id="parsed-agent" class="form-control"><option value="">-- اختر موظف --</option></select></td>
+                    <td><button onclick="saveSmartLead()" class="btn-main" style="padding: 6px 12px;">🚀 حفظ وتوجيه</button></td>
+                </tr>
+            ;
+        }
+
+        async function saveSmartLead() {
+            const name = document.getElementById('parsed-name').value;
+            const address = document.getElementById('parsed-address').value;
+            const note = document.getElementById('parsed-note').value;
+            const phone = document.getElementById('parsed-phone').value;
+            const instagram = document.getElementById('parsed-insta').value;
+            const agent = document.getElementById('parsed-agent').value;
+
+            if (!agent) {
+                alert('يرجى اختيار الموظف لتوجيه الشركة له!');
+                return;
+            }
+            if (!phone) {
+                alert('يرجى إدخال رقم الهاتف!');
+                return;
+            }
+
+            const res = await fetchWithAuth('/api/companies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name, phone, address, note, instagram, agent, status: 'NoDeal', callCount: 0
+                })
+            });
+
+            if (res.ok) {
+                alert('تمت إضافة الشركة وتوجيهها للموظف (' + agent + ') بنجاح! 🎉');
+                document.getElementById('smartTextInput').value = '';
+                document.getElementById('smartResultsTable').style.display = 'none';
+                loadAdminData();
+            } else {
+                alert('فشل حفظ الشركة.');
+            }
+        }
 
         function logout() {
             localStorage.clear();
             window.location.href = 'index.html';
-        }// دالة تحليل النص للرسائل
-function analyzeSmartText() {
-    let rawText = document.getElementById('smartTextInput').value.trim();
-    if (!rawText) {
-        alert('يرجى لصق نص الرسالة أولاً!');
-        return;
-    }
+        }
 
-    let lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    let extractedName = lines[0] || "شركة جديدة";
-    let extractedAddress = lines.find(l => l.includes('بغداد') || l.includes('اربيل') || l.includes('البصرة') || l.includes('عنوان')) || "العراق";
-    let extractedNote = rawText;
-
-    let emps = JSON.parse(localStorage.getItem('ingenheim_employees')) || [];
-    let empOptions = emps.map(e => '<option value="' + e.username + '">' + e.username + '</option>').join('');
-
-    let tbody = document.getElementById('smartResultsBody');
-    document.getElementById('smartResultsTable').style.display = 'table';
-
-    tbody.innerHTML = '<tr>' +
-        '<td><input type="text" id="parsed-name" class="form-control" value="' + extractedName + '"></td>' +
-        '<td><input type="text" id="parsed-address" class="form-control" value="' + extractedAddress + '"></td>' +
-        '<td><input type="text" id="parsed-note" class="form-control" value="' + extractedNote + '"></td>' +
-        '<td><input type="text" id="parsed-phone" class="form-control" placeholder="07xxxxxxxx"></td>' +
-        '<td><input type="text" id="parsed-insta" class="form-control" placeholder="@username"></td>' +
-        '<td><select id="parsed-agent" class="form-control" style="padding: 5px;"><option value="">-- اختر موظف --</option>' + empOptions + '</select></td>' +
-        '<td><button onclick="saveSmartLead()" class="btn-main" style="padding: 6px 12px; background-color: #00ff66; color: #0b0f0d;">🚀 حفظ وتوجيه</button></td>' +
-        '</tr>';
-}
-
-// دالة حفظ البيانات الموجهة للموظف
-async function saveSmartLead() {
-    let name = document.getElementById('parsed-name').value;
-    let address = document.getElementById('parsed-address').value;
-    let note = document.getElementById('parsed-note').value;
-    let phone = document.getElementById('parsed-phone').value;
-    let instagram = document.getElementById('parsed-insta').value;
-    let agent = document.getElementById('parsed-agent').value;
-
-    if (!agent) {
-        alert('يرجى اختيار الموظف لتوجيه الشركة له!');
-        return;
-    }
-    if (!phone) {
-        alert('يرجى إدخال رقم الهاتف!');
-        return;
-    }
-
-    let newComp = {
-        name: name,
-        phone: phone,
-        address: address,
-        note: note,
-        instagram: instagram,
-        agent: agent,
-        status: 'NoDeal',
-        callCount: 0
-    };
-
-    let res = await fetch('/api/companies', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newComp)
-    });
-
-    if (res.ok) {
-        alert('تمت إضافة الشركة وتوجيهها للموظف (' + agent + ') بنجاح! 🎉');
-        document.getElementById('smartTextInput').value = '';
-        document.getElementById('smartResultsTable').style.display = 'none';
-        if (typeof loadCompanies === 'function') loadCompanies();
-    } else {
-        alert('فشل حفظ الشركة.');
-    }
-}
-        
+        loadAdminData();
     </script>
-    
 </body>
 </html>

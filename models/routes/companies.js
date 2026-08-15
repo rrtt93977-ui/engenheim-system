@@ -1,56 +1,57 @@
-const router = require('express').Router();
-const Company = require('../models/Company');
+﻿const router = require('express').Router();
+const Company = require('../company');
+const { authMiddleware, adminOnly } = require('../../middleware/auth');
 
-// 1. إضافة شركة جديدة وتوزيعها لموظف (خاص بالمدير)
-router.post('/add', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     try {
-        const { companyName, address, phone, assignedTo } = req.body;
+        const { agent } = req.query;
+        let query = {};
+        if (agent) query.agent = agent;
+        
+        if (req.user.role === 'employee' && req.user.username !== agent) {
+             query.agent = req.user.username;
+        }
+
+        const companies = await Company.find(query).sort({ createdAt: -1 });
+        res.json(companies);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.post('/', authMiddleware, async (req, res) => {
+    try {
+        const { name, phone, address, status, agent, callCount, note, instagram } = req.body;
         
         const newCompany = new Company({
-            companyName,
-            address,
-            phone,
-            assignedTo
+            name, phone, address, status, agent, callCount, note, instagram
         });
 
         const savedCompany = await newCompany.save();
-        res.status(201).json({ message: 'تم إضافة الشركة بنجاح', savedCompany });
+        res.status(201).json(savedCompany);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// 2. جلب الشركات الخاصة بموظف معين (تظهر في داشبورد الموظف)
-router.get('/my-companies/:userId', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
     try {
-        const { userId } = req.params;
-        const companies = await Company.find({ assignedTo: userId });
-        res.json(companies);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// 3. تحديث حالة الاتصال (لما الموظف يخابر ويثبت النتيجة: Agreed, Meeting, etc.)
-router.put('/update-status/:id', async (req, res) => {
-    try {
-        const { status } = req.body;
         const updatedCompany = await Company.findByIdAndUpdate(
             req.params.id,
-            { status },
+            req.body,
             { new: true }
         );
-        res.json({ message: 'تم تحديث الحالة بنجاح', updatedCompany });
+        if (!updatedCompany) return res.status(404).json({ error: 'Company not found' });
+        res.json(updatedCompany);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// 4. جلب كل الشركات للإحصائيات (خاص بالمدير)
-router.get('/all', async (req, res) => {
+router.delete('/:id', authMiddleware, adminOnly, async (req, res) => {
     try {
-        const companies = await Company.find().populate('assignedTo', 'name email');
-        res.json(companies);
+        await Company.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Deleted successfully' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

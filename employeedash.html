@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -65,7 +65,7 @@
         <header class="topbar">
             <h2>لوحة متابعة الموظف</h2>
             <div class="topbar-actions">
-                <span class="user-badge" id="currentAgentBadge">👤 موظف</span>
+                <span class="user-badge" id="currentAgentBadge">👤 جاري التحميل...</span>
                 <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
             </div>
         </header>
@@ -110,73 +110,90 @@
     </div>
 
     <script>
-        if (localStorage.getItem('isLoggedIn') !== 'true' || localStorage.getItem('userRole') !== 'employee') {
+        const token = localStorage.getItem('token');
+        if (!token || localStorage.getItem('userRole') !== 'employee') {
             alert('غير مسموح بالدخول، يرجى تسجيل الدخول بحساب موظف!');
             window.location.href = 'index.html';
         }
 
-        const currentAgent = localStorage.getItem('currentEmpUser');
-        document.getElementById('currentAgentBadge').textContent = `👤 الموظف: ${currentAgent}`;
+        async function fetchWithAuth(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': Bearer 
+            };
+            const res = await fetch(url, options);
+            if (res.status === 401 || res.status === 403) {
+                alert('انتهت الجلسة، يرجى إعادة تسجيل الدخول');
+                logout();
+                throw new Error('Unauthorized');
+            }
+            return res;
+        }
 
         async function loadEmployeeData() {
-            let emps = JSON.parse(localStorage.getItem('ingenheim_employees')) || [];
-            let empData = emps.find(e => e.username === currentAgent) || { target: 20 };
-            let target = empData.target > 0 ? empData.target : 1;
+            try {
+                // 1. Get current profile
+                const meRes = await fetchWithAuth('/api/auth/me');
+                const me = await meRes.json();
+                document.getElementById('currentAgentBadge').textContent = 👤 الموظف:  ();
 
-            // جلب كافة الشركات من السيرفر وتصفيتها للموظف الحالي بدقة
-            let res = await fetch('/api/companies');
-            let allCompanies = await res.json();
-            
-            let myCompanies = allCompanies.filter(c => c.agent === currentAgent);
+                const target = me.target > 0 ? me.target : 20;
 
-            document.getElementById('myTotalCompanies').textContent = myCompanies.length;
+                // 2. Fetch assigned companies
+                const res = await fetchWithAuth(/api/companies?agent=);
+                const myCompanies = await res.json();
 
-            let dealsCount = 0;
-            let totalCallsCount = 0;
-            myCompanies.forEach(c => {
-                if (c.status === 'Deal') dealsCount++;
-                totalCallsCount += (c.callCount || 0);
-            });
+                document.getElementById('myTotalCompanies').textContent = myCompanies.length;
 
-            document.getElementById('myDealsDone').textContent = dealsCount;
-            document.getElementById('myTotalCalls').textContent = totalCallsCount;
+                let dealsCount = 0;
+                let totalCallsCount = 0;
+                myCompanies.forEach(c => {
+                    if (c.status === 'Deal') dealsCount++;
+                    totalCallsCount += (c.callCount || 0);
+                });
 
-            let percentage = Math.min(Math.round((dealsCount / target) * 100), 100);
-            document.getElementById('myProgressPercent').textContent = percentage + '%';
+                document.getElementById('myDealsDone').textContent = dealsCount;
+                document.getElementById('myTotalCalls').textContent = totalCallsCount;
 
-            let tbody = document.getElementById('myCompaniesTableBody');
-            if (myCompanies.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#8a9990; padding:20px;">لا توجد شركات مسندة إليك حالياً من قِبل الأدمن.</td></tr>`;
-                return;
+                const percentage = Math.min(Math.round((dealsCount / target) * 100), 100);
+                document.getElementById('myProgressPercent').textContent = percentage + '% (' + dealsCount + '/' + target + ')';
+
+                const tbody = document.getElementById('myCompaniesTableBody');
+                if (myCompanies.length === 0) {
+                    tbody.innerHTML = <tr><td colspan="6" style="text-align:center; color:#8a9990; padding:20px;">لا توجد شركات مسندة إليك حالياً من قِبل الأدمن.</td></tr>;
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                myCompanies.forEach(comp => {
+                    tbody.innerHTML += 
+                        <tr>
+                            <td><strong></strong></td>
+                            <td></td>
+                            <td></td>
+                            <td><span style="color:#00ff66; font-weight:bold;"> مكالمات</span></td>
+                            <td>
+                                <select class="table-select" onchange="updateStatus('', this.value)">
+                                    <option value="NoDeal" >لم يتم الديل</option>
+                                    <option value="Deal" >تم الديل (صفقة)</option>
+                                    <option value="Meeting" >محدد ميتينغ</option>
+                                    <option value="Called" >تم الاتصال فقط</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="call-btn" onclick="incrementCall('', )">📞 تسجيل مكالمة</button>
+                                <button class="deal-btn" onclick="makeDeal('')">✅ تم الديل</button>
+                            </td>
+                        </tr>
+                    ;
+                });
+            } catch (err) {
+                console.error('Error loading employee data:', err);
             }
-
-            tbody.innerHTML = '';
-            myCompanies.forEach(comp => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${comp.name}</strong></td>
-                        <td>${comp.phone}</td>
-                        <td>${comp.address}</td>
-                        <td><span style="color:#00ff66; font-weight:bold;">${comp.callCount || 0} مكالمات</span></td>
-                        <td>
-                            <select class="table-select" onchange="updateStatus('${comp.id}', this.value)">
-                                <option value="NoDeal" ${comp.status === 'NoDeal' ? 'selected' : ''}>لم يتم الديل</option>
-                                <option value="Deal" ${comp.status === 'Deal' ? 'selected' : ''}>تم الديل (صفقة)</option>
-                                <option value="Meeting" ${comp.status === 'Meeting' ? 'selected' : ''}>محدد ميتينغ</option>
-                                <option value="Called" ${comp.status === 'Called' ? 'selected' : ''}>تم الاتصال فقط</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button class="call-btn" onclick="incrementCall('${comp.id}', ${comp.callCount || 0})">📞 تسجيل مكالمة</button>
-                            <button class="deal-btn" onclick="makeDeal('${comp.id}')">✅ تم الديل</button>
-                        </td>
-                    </tr>
-                `;
-            });
         }
 
         async function incrementCall(id, currentCount) {
-            await fetch(`/api/companies/${id}`, {
+            await fetchWithAuth(/api/companies/, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ callCount: currentCount + 1 })
@@ -185,7 +202,7 @@
         }
 
         async function makeDeal(id) {
-            await fetch(`/api/companies/${id}`, {
+            await fetchWithAuth(/api/companies/, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'Deal' })
@@ -195,7 +212,7 @@
         }
 
         async function updateStatus(id, newStatus) {
-            await fetch(`/api/companies/${id}`, {
+            await fetchWithAuth(/api/companies/, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })
@@ -203,12 +220,12 @@
             loadEmployeeData();
         }
 
-        loadEmployeeData();
-
         function logout() {
             localStorage.clear();
             window.location.href = 'index.html';
         }
+
+        loadEmployeeData();
     </script>
 </body>
 </html>

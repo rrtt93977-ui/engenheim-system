@@ -1,55 +1,34 @@
+﻿require('dotenv').config();
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const User = require('./models/User');
+const User = require('../user');
 
 async function createFiveEmployeesAndAdmin() {
     try {
-        await mongoose.connect('mongodb://localhost:27017/sales_dashboard');
-        console.log('متصل بقاعدة البيانات بنجاح...');
+        const uri = process.env.MONGODB_URI;
+        if (!uri) throw new Error('MONGODB_URI is missing in .env');
+        
+        console.log('Connecting to MongoDB Atlas using Google DNS (8.8.8.8)...');
+        await mongoose.connect(uri);
+        console.log('Connected to MongoDB successfully!');
 
         const usersList = [
-            {
-                name: 'مدير النظام',
-                email: 'admin@system.com',
-                password: '123456',
-                role: 'admin'
-            },
-            {
-                name: 'عباس',
-                email: 'abbas@system.com',
-                password: '123456',
-                role: 'employee'
-            },
-            {
-                name: 'أحمد',
-                email: 'ahmed@system.com',
-                password: '123456',
-                role: 'employee'
-            },
-            {
-                name: 'أمير',
-                email: 'ameer@system.com',
-                password: '123456',
-                role: 'employee'
-            },
-            {
-                name: 'sales 1',
-                email: 'sales1 @system.com',
-                password: '123456',
-                role: 'employee'
-            },
-            {
-                name: 'sales 2',
-                email: 'msales2 @system.com',
-                password: '123456',
-                role: 'employee'
-            }
+            { name: 'مدير النظام', username: 'admin', email: 'admin@system.com', password: 'admin123', role: 'admin', target: 0 },
+            { name: 'عباس', username: 'emp1', email: 'abbas@system.com', password: '1234', role: 'employee', target: 20 },
+            { name: 'أحمد', username: 'emp2', email: 'ahmed@system.com', password: '1234', role: 'employee', target: 20 },
+            { name: 'أمير', username: 'emp3', email: 'ameer@system.com', password: '1234', role: 'employee', target: 25 },
+            { name: 'sales 1', username: 'emp4', email: 'sales1@system.com', password: '1234', role: 'employee', target: 15 },
+            { name: 'sales 2', username: 'emp5', email: 'sales2@system.com', password: '1234', role: 'employee', target: 30 }
         ];
 
-        for (let userData of usersList) {
-            const existingUser = await User.findOne({ email: userData.email });
+        for (const userData of usersList) {
+            const existingUser = await User.findOne({ username: userData.username });
             if (existingUser) {
-                console.log(`الحساب ${userData.email} موجود مسبقاً.`);
+                console.log('User already exists: ' + userData.username);
+                await User.updateOne({ username: userData.username }, { target: userData.target });
                 continue;
             }
 
@@ -58,20 +37,22 @@ async function createFiveEmployeesAndAdmin() {
 
             const newUser = new User({
                 name: userData.name,
+                username: userData.username,
                 email: userData.email,
                 password: hashedPassword,
-                role: userData.role
+                role: userData.role,
+                target: userData.target
             });
 
             await newUser.save();
-            console.log(`تم إنشاء حساب: ${userData.name} (${userData.email})`);
+            console.log('Created user: ' + userData.name + ' (' + userData.username + ')');
         }
 
-        console.log('تم الانتهاء من إنشاء جميع الحسابات بنجاح!');
-        process.exit();
+        console.log('Finished creating all users successfully in MongoDB Atlas!');
+        process.exit(0);
     } catch (err) {
-        console.error('خطأ:', err);
-        process.exit();
+        console.error('Error during seeding:', err);
+        process.exit(1);
     }
 }
 
