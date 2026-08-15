@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Engenheim | نظام إدارة المبيعات</title>
     <meta name="description" content="Engenheim Sales Management Platform">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
     <style>
         body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg-0);overflow:hidden}
         .login-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:100vh;padding:var(--s-6)}
@@ -32,8 +32,7 @@
     <div class="login-bg-2"></div>
     <div class="login-card anim-slide-up">
         <div class="login-brand">
-            <h1>Engenheim</h1>
-            <p>نظام إدارة قسم المبيعات</p>
+            <div style="text-align: center; margin-bottom: var(--s-4);"><img src="img/logo.png" alt="Engenheim" style="width: 220px; display: block; margin: 0 auto;"><p style="margin-top: 12px; font-size: var(--fs-sm); color: var(--text-3); letter-spacing: 2px; font-weight: var(--fw-semi);">SALES SYSTEM</p></div>
         </div>
         <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="on">
             <div class="form-group">
@@ -80,3 +79,6 @@ async function handleLogin(e){
 </script>
 </body>
 </html>
+
+
+
