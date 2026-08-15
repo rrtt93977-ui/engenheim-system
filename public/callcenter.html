@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الكول سنتر | Engenheim</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<div class="page-layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand"><div style="text-align: center;"><img src="img/logo.png" alt="Engenheim" style="width: 170px; display: block; margin: 0 auto;"><p style="margin-top: 8px; font-size: var(--fs-xs); color: var(--text-3); letter-spacing: 2px; font-weight: var(--fw-semi);">SALES SYSTEM</p></div></div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html"><i data-lucide="layout-dashboard" class="nav-icon"></i>لوحة التحكم</a>
+            <a href="callcenter.html" class="active"><i data-lucide="phone-call" class="nav-icon"></i>الكول سنتر</a>
+            <a href="search-companies.html"><i data-lucide="search" class="nav-icon"></i>البحث عن شركات</a>
+        </nav>
+        <div class="sidebar-footer">Engenheim &copy; 2026</div>
+    </aside>
+    <div class="main-wrapper">
+        <header class="topbar">
+            <h2 class="topbar-title">إدارة المكالمات المركزية</h2>
+            <div class="topbar-actions">
+                <span class="last-updated" id="lastUpdated"></span>
+                <span class="user-badge"><span class="badge-dot"></span>العمليات</span>
+                <button class="btn btn-logout" onclick="AUTH.logout()"><span>خروج</span></button>
+            </div>
+        </header>
+        <main class="content-area">
+            <nav class="breadcrumb"><a href="dashboard.html">الرئيسية</a><span class="sep">/</span><span class="current">الكول سنتر</span></nav>
+            <div class="section" style="padding:var(--s-4) var(--s-6)">
+                <div class="flex items-center gap-md" style="flex-wrap:wrap">
+                    <div class="form-group" style="margin:0;min-width:150px"><select class="form-select" id="filterStatus" onchange="loadData()"><option value="">جميع الحالات</option><option value="NoDeal">لم يتم</option><option value="Deal">تم الديل</option><option value="Meeting">ميتينغ</option><option value="Called">تم الاتصال</option></select></div>
+                    <div class="form-group" style="margin:0;min-width:150px"><select class="form-select" id="filterAgent" onchange="loadData()"><option value="">جميع الموظفين</option></select></div>
+                    <div class="form-group" style="margin:0;flex:1;min-width:200px"><input class="form-input" type="text" id="searchBox" placeholder="البحث بالاسم أو الهاتف..." oninput="filterTable()"></div>
+                </div>
+            </div>
+            <section class="section">
+                <div class="section-header"><h3 class="section-title"><i data-lucide="list"></i>جميع الشركات</h3><span class="text-muted" style="font-size:var(--fs-xs)" id="companyCount"></span></div>
+                <table class="data-table"><thead><tr><th>الشركة</th><th>الهاتف</th><th>العنوان</th><th>الموظف</th><th>المكالمات</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="callTableBody"></tbody></table>
+            </section>
+        </main>
+    </div>
+</div>
+<script src="js/app.js"></script>
+<script>
+if(!AUTH.requireAuth()) throw new Error('Denied');
+var allCompanies=[];
+async function loadData(){
+    try{
+        var empRes=await AUTH.fetchWithAuth('/api/auth/employees');var emps=await empRes.json();
+        var fa=document.getElementById('filterAgent');if(fa.options.length<=1)emps.forEach(function(e){fa.innerHTML+='<option value="'+e.username+'">'+e.name+'</option>';});
+        var res=await AUTH.fetchWithAuth('/api/companies');allCompanies=await res.json();
+        renderTable();updateTimestamp('lastUpdated');if(typeof lucide!=='undefined')lucide.createIcons();
+    }catch(err){console.error(err);}
+}
+function renderTable(){
+    var sf=document.getElementById('filterStatus').value,af=document.getElementById('filterAgent').value;
+    var f=allCompanies;if(sf)f=f.filter(function(c){return c.status===sf;});if(af)f=f.filter(function(c){return c.agent===af;});
+    document.getElementById('companyCount').textContent=f.length+' نتيجة';
+    var tb=document.getElementById('callTableBody');
+    if(!f.length){tb.innerHTML='<tr class="empty-row"><td colspan="7">لا توجد نتائج مطابقة</td></tr>';return;}
+    tb.innerHTML='';f.forEach(function(c){
+        tb.innerHTML+='<tr data-search="'+(c.name+c.phone).toLowerCase()+'"><td class="fw-semi">'+c.name+'</td><td><a href="tel:'+c.phone+'" style="color:var(--text-1)">'+c.phone+'</a></td><td>'+c.address+'</td><td class="text-accent">'+c.agent+'</td><td class="fw-bold">'+(c.callCount||0)+'</td><td>'+statusBadge(c.status)+'</td><td><div class="flex gap-xs"><button class="btn btn-secondary btn-sm" onclick="incCall(\''+c._id+'\','+(c.callCount||0)+')">تسجيل مكالمة</button><button class="btn btn-primary btn-sm" onclick="deal(\''+c._id+'\')">إغلاق ديل</button></div></td></tr>';
+    });
+}
+function filterTable(){var q=document.getElementById('searchBox').value.toLowerCase();document.querySelectorAll('#callTableBody tr').forEach(function(r){var d=(r.getAttribute('data-search')||'');r.style.display=d.includes(q)?'':'none';});}
+async function incCall(id,c){await AUTH.fetchWithAuth('/api/companies/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({callCount:c+1})});showToast('تم تسجيل المكالمة');loadData();}
+async function deal(id){await AUTH.fetchWithAuth('/api/companies/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'Deal'})});showToast('تم إغلاق الصفقة');loadData();}
+loadData();
+</script>
+</body>
+</html>
+
+
+

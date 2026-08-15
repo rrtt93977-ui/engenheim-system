@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | Engenheim</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg-0);overflow:hidden}
+        .err-wrap{position:relative;text-align:center;padding:var(--s-9)}
+        .err-wrap .code{font-size:120px;font-weight:var(--fw-bold);color:var(--bg-3);letter-spacing:-8px;line-height:1}
+        .err-wrap .msg{font-size:var(--fs-lg);font-weight:var(--fw-semi);color:var(--text-0);margin:var(--s-4) 0 var(--s-2)}
+        .err-wrap .desc{font-size:var(--fs-sm);color:var(--text-3);margin-bottom:var(--s-7)}
+    </style>
+</head>
+<body>
+<div class="err-wrap anim-slide-up">
+    <div class="code">404</div>
+    <div class="msg">الصفحة غير موجودة</div>
+    <p class="desc">عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.</p>
+    <button onclick="goHome()" class="btn btn-primary" style="height:40px">العودة للرئيسية</button>
+</div>
+<script src="js/app.js"></script>
+<script>
+function goHome(){
+    if(AUTH.isLoggedIn()) window.location.href=AUTH.isAdmin()?'dashboard.html':'employeedash.html';
+    else window.location.href='index.html';
+}
+</script>
+</body>
+</html>
+
