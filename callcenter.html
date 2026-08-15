@@ -3,185 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الكول سنتر - Engenheim System</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b0f0d; color: #e0e0e0; display: flex; height: 100vh; direction: rtl; overflow: hidden; }
-        
-        .sidebar { width: 270px; background-color: #121814; border-left: 1px solid #1f3324; display: flex; flex-direction: column; flex-shrink: 0; }
-        .sidebar-brand { padding: 30px 20px; border-bottom: 1px solid #1f3324; text-align: center; background-color: #151f18; }
-        .sidebar-brand h1 { color: #00ff66; font-size: 20px; font-weight: bold; margin-bottom: 4px; }
-        .sidebar-brand span { font-size: 11.5px; color: #8a9990; }
-        
-        .sidebar-menu { list-style: none; padding: 25px 0; }
-        .sidebar-menu li a { display: block; padding: 14px 25px; color: #a3b8ac; text-decoration: none; font-size: 14px; font-weight: 600; border-right: 3px solid transparent; transition: 0.2s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: #17221a; color: #00ff66; border-right-color: #00ff66; }
-        
-        .main-wrapper { flex: 1; display: flex; flex-direction: column; background-color: #0b0f0d; overflow-y: auto; }
-        .topbar { height: 75px; background-color: #121814; border-bottom: 1px solid #1f3324; display: flex; justify-content: space-between; align-items: center; padding: 0 35px; }
-        .topbar h2 { font-size: 17px; color: #ffffff; font-weight: 600; }
-        .topbar-actions { display: flex; align-items: center; gap: 15px; }
-        .user-badge { background-color: #151f18; border: 1px solid #1f3324; padding: 7px 15px; border-radius: 6px; font-size: 13px; color: #00ff66; font-weight: 600; }
-        .logout-btn { background-color: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 7px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .logout-btn:hover { background-color: #ff4d4d; color: #ffffff; }
-
-        .content-container { padding: 35px; }
-        .section-box { background-color: #121814; border: 1px solid #1f3324; padding: 25px; border-radius: 10px; margin-bottom: 30px; }
-        .section-box h4 { color: #00ff66; margin-bottom: 20px; font-size: 16px; font-weight: 600; }
-
-        table { width: 100%; border-collapse: collapse; text-align: right; }
-        th, td { padding: 14px 16px; border-bottom: 1px solid #1f3324; font-size: 13.5px; }
-        th { background-color: #151f18; color: #00ff66; font-weight: 600; }
-        tr:hover { background-color: #17221a; }
-        
-        .call-btn { background-color: #1a2e20; color: #00ff66; border: 1px solid #00ff66; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .call-btn:hover { background-color: #00ff66; color: #0b0f0d; }
-        
-        .deal-btn { background-color: #00ff66; color: #0b0f0d; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .deal-btn:hover { background-color: #00cc52; }
-
-        .table-select { background: #0b0f0d; border: 1px solid #1f3324; color: #fff; padding: 6px 10px; border-radius: 5px; font-size: 13px; }
-        .table-select:focus { border-color: #00ff66; outline: none; }
-    </style>
+    <title>الكول سنتر | Engenheim</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-
+<div class="page-layout">
     <aside class="sidebar">
-        <div class="sidebar-brand">
-            <h1>Engenheim</h1>
-            <span>نظام الاتصالات والعمليات</span>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="dashboard.html">لوحة الأدمن الرئيسية</a></li>
-            <li><a href="callcenter.html" class="active">نظام الكول سنتر</a></li>
-            <li><a href="search-companies.html">نظام البحث عن الشركات</a></li>
-        </ul>
+        <div class="sidebar-brand"><h1>Engenheim</h1><p class="subtitle">Sales Management</p></div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html"><i data-lucide="layout-dashboard" class="nav-icon"></i>لوحة التحكم</a>
+            <a href="callcenter.html" class="active"><i data-lucide="phone-call" class="nav-icon"></i>الكول سنتر</a>
+            <a href="search-companies.html"><i data-lucide="search" class="nav-icon"></i>البحث عن شركات</a>
+        </nav>
+        <div class="sidebar-footer">Engenheim &copy; 2026</div>
     </aside>
-
     <div class="main-wrapper">
         <header class="topbar">
-            <h2>إدارة المكالمات المركزية - Call Center</h2>
+            <h2 class="topbar-title">إدارة المكالمات المركزية</h2>
             <div class="topbar-actions">
-                <span class="user-badge">📞 مشرف الكول سنتر</span>
-                <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+                <span class="last-updated" id="lastUpdated"></span>
+                <span class="user-badge"><span class="badge-dot"></span>العمليات</span>
+                <button class="btn btn-logout" onclick="AUTH.logout()"><span>خروج</span></button>
             </div>
         </header>
-
-        <main class="content-container">
-            <section class="section-box">
-                <h4>📋 جميع الشركات المسجلة في النظام ومتابعة مكالماتها</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>اسم الشركة</th>
-                            <th>رقم الهاتف</th>
-                            <th>العنوان</th>
-                            <th>الموظف المسؤول</th>
-                            <th>عدد المكالمات</th>
-                            <th>الحالة</th>
-                            <th>الإجراءات السريعة</th>
-                        </tr>
-                    </thead>
-                    <tbody id="callCenterTableBody"></tbody>
-                </table>
+        <main class="content-area">
+            <nav class="breadcrumb"><a href="dashboard.html">الرئيسية</a><span class="sep">/</span><span class="current">الكول سنتر</span></nav>
+            <div class="section" style="padding:var(--s-4) var(--s-6)">
+                <div class="flex items-center gap-md" style="flex-wrap:wrap">
+                    <div class="form-group" style="margin:0;min-width:150px"><select class="form-select" id="filterStatus" onchange="loadData()"><option value="">جميع الحالات</option><option value="NoDeal">لم يتم</option><option value="Deal">تم الديل</option><option value="Meeting">ميتينغ</option><option value="Called">تم الاتصال</option></select></div>
+                    <div class="form-group" style="margin:0;min-width:150px"><select class="form-select" id="filterAgent" onchange="loadData()"><option value="">جميع الموظفين</option></select></div>
+                    <div class="form-group" style="margin:0;flex:1;min-width:200px"><input class="form-input" type="text" id="searchBox" placeholder="البحث بالاسم أو الهاتف..." oninput="filterTable()"></div>
+                </div>
+            </div>
+            <section class="section">
+                <div class="section-header"><h3 class="section-title"><i data-lucide="list"></i>جميع الشركات</h3><span class="text-muted" style="font-size:var(--fs-xs)" id="companyCount"></span></div>
+                <table class="data-table"><thead><tr><th>الشركة</th><th>الهاتف</th><th>العنوان</th><th>الموظف</th><th>المكالمات</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="callTableBody"></tbody></table>
             </section>
         </main>
     </div>
-
-    <script>
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('يرجى تسجيل الدخول أولاً!');
-            window.location.href = 'index.html';
-        }
-
-        async function fetchWithAuth(url, options = {}) {
-            options.headers = {
-                ...options.headers,
-                'Authorization': Bearer 
-            };
-            const res = await fetch(url, options);
-            if (res.status === 401 || res.status === 403) {
-                alert('انتهت الجلسة، يرجى تسجيل الدخول');
-                logout();
-                throw new Error('Unauthorized');
-            }
-            return res;
-        }
-
-        async function loadCallCenterData() {
-            try {
-                const res = await fetchWithAuth('/api/companies');
-                const companies = await res.json();
-
-                const tbody = document.getElementById('callCenterTableBody');
-                if (companies.length === 0) {
-                    tbody.innerHTML = <tr><td colspan="7" style="text-align:center; color:#8a9990; padding:20px;">لا توجد شركات مسجلة في النظام حالياً.</td></tr>;
-                    return;
-                }
-
-                tbody.innerHTML = '';
-                companies.forEach(comp => {
-                    tbody.innerHTML += 
-                        <tr>
-                            <td><strong></strong></td>
-                            <td></td>
-                            <td></td>
-                            <td><span style="color:#00ff66;"></span></td>
-                            <td><span style="color:#00ff66; font-weight:bold;"> مكالمات</span></td>
-                            <td>
-                                <select class="table-select" onchange="updateStatus('', this.value)">
-                                    <option value="NoDeal" >لم يتم الديل</option>
-                                    <option value="Deal" >تم الديل (صفقة)</option>
-                                    <option value="Meeting" >محدد ميتينغ</option>
-                                    <option value="Called" >تم الاتصال فقط</option>
-                                </select>
-                            </td>
-                            <td>
-                                <button class="call-btn" onclick="incrementCall('', )">📞 تسجيل مكالمة</button>
-                                <button class="deal-btn" onclick="makeDeal('')">✅ ديل</button>
-                            </td>
-                        </tr>
-                    ;
-                });
-            } catch (err) {
-                console.error('Error loading callcenter data:', err);
-            }
-        }
-
-        async function incrementCall(id, currentCount) {
-            await fetchWithAuth(/api/companies/, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ callCount: currentCount + 1 })
-            });
-            loadCallCenterData();
-        }
-
-        async function makeDeal(id) {
-            await fetchWithAuth(/api/companies/, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: 'Deal' })
-            });
-            loadCallCenterData();
-        }
-
-        async function updateStatus(id, newStatus) {
-            await fetchWithAuth(/api/companies/, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: newStatus })
-            });
-            loadCallCenterData();
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        }
-
-        loadCallCenterData();
-    </script>
+</div>
+<script src="app.js"></script>
+<script>
+if(!AUTH.requireAuth()) throw new Error('Denied');
+var allCompanies=[];
+async function loadData(){
+    try{
+        var empRes=await AUTH.fetchWithAuth('/api/auth/employees');var emps=await empRes.json();
+        var fa=document.getElementById('filterAgent');if(fa.options.length<=1)emps.forEach(function(e){fa.innerHTML+='<option value="'+e.username+'">'+e.name+'</option>';});
+        var res=await AUTH.fetchWithAuth('/api/companies');allCompanies=await res.json();
+        renderTable();updateTimestamp('lastUpdated');if(typeof lucide!=='undefined')lucide.createIcons();
+    }catch(err){console.error(err);}
+}
+function renderTable(){
+    var sf=document.getElementById('filterStatus').value,af=document.getElementById('filterAgent').value;
+    var f=allCompanies;if(sf)f=f.filter(function(c){return c.status===sf;});if(af)f=f.filter(function(c){return c.agent===af;});
+    document.getElementById('companyCount').textContent=f.length+' نتيجة';
+    var tb=document.getElementById('callTableBody');
+    if(!f.length){tb.innerHTML='<tr class="empty-row"><td colspan="7">لا توجد نتائج مطابقة</td></tr>';return;}
+    tb.innerHTML='';f.forEach(function(c){
+        tb.innerHTML+='<tr data-search="'+(c.name+c.phone).toLowerCase()+'"><td class="fw-semi">'+c.name+'</td><td><a href="tel:'+c.phone+'" style="color:var(--text-1)">'+c.phone+'</a></td><td>'+c.address+'</td><td class="text-accent">'+c.agent+'</td><td class="fw-bold">'+(c.callCount||0)+'</td><td>'+statusBadge(c.status)+'</td><td><div class="flex gap-xs"><button class="btn btn-secondary btn-sm" onclick="incCall(\''+c._id+'\','+(c.callCount||0)+')">تسجيل مكالمة</button><button class="btn btn-primary btn-sm" onclick="deal(\''+c._id+'\')">إغلاق ديل</button></div></td></tr>';
+    });
+}
+function filterTable(){var q=document.getElementById('searchBox').value.toLowerCase();document.querySelectorAll('#callTableBody tr').forEach(function(r){var d=(r.getAttribute('data-search')||'');r.style.display=d.includes(q)?'':'none';});}
+async function incCall(id,c){await AUTH.fetchWithAuth('/api/companies/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({callCount:c+1})});showToast('تم تسجيل المكالمة');loadData();}
+async function deal(id){await AUTH.fetchWithAuth('/api/companies/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'Deal'})});showToast('تم إغلاق الصفقة');loadData();}
+loadData();
+</script>
 </body>
 </html>

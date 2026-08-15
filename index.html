@@ -3,84 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - Engenheim System</title>
+    <title>Engenheim | نظام إدارة المبيعات</title>
+    <meta name="description" content="Engenheim Sales Management Platform">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b0f0d; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; direction: rtl; }
-        .login-card { background-color: #121814; border: 1px solid #1f3324; padding: 35px; border-radius: 10px; width: 380px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .login-card h2 { color: #00ff66; text-align: center; margin-bottom: 25px; font-size: 20px; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; margin-bottom: 8px; color: #a3b8ac; font-size: 13.5px; }
-        .input-group input { width: 100%; padding: 12px; background-color: #0b0f0d; border: 1px solid #233b2a; border-radius: 6px; color: #ffffff; font-size: 14px; }
-        .input-group input:focus { outline: none; border-color: #00ff66; }
-        .btn-login { background-color: #00ff66; color: #0b0f0d; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-login:hover { background-color: #00cc52; }
-        .error-msg { color: #ff4d4d; font-size: 13px; margin-top: 10px; text-align: center; display: none; }
+        body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg-0);overflow:hidden}
+        .login-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:100vh;padding:var(--s-6)}
+        .login-bg{position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(0,255,102,0.04) 0%,transparent 65%);pointer-events:none;animation:glow-pulse 8s ease-in-out infinite}
+        .login-bg-2{position:absolute;bottom:-200px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,255,102,0.025) 0%,transparent 65%);pointer-events:none;animation:glow-pulse 10s ease-in-out 2s infinite}
+        .login-card{background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--glass-border);border-radius:var(--r-5);padding:var(--s-9) var(--s-8);width:100%;max-width:400px;position:relative;z-index:1;box-shadow:var(--sh-xl),inset 0 1px 0 rgba(255,255,255,0.05)}
+        .login-card::before{content:'';position:absolute;top:0;right:0;left:0;height:2px;border-radius:var(--r-5) var(--r-5) 0 0;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0.4}
+        .login-brand{text-align:center;margin-bottom:var(--s-8)}
+        .login-brand h1{font-size:var(--fs-2xl);font-weight:var(--fw-bold);background:var(--accent-grd);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradient-shift 6s linear infinite;letter-spacing:-0.5px;margin-bottom:4px}
+        .login-brand p{font-size:var(--fs-xs);color:var(--text-4);font-weight:var(--fw-medium);letter-spacing:1px;text-transform:uppercase}
+        .login-card .form-group{margin-bottom:var(--s-5)}
+        .login-card .form-input{height:42px}
+        .login-error{margin-top:var(--s-4);padding:var(--s-3) var(--s-4);background:var(--danger-dim);border:1px solid rgba(239,68,68,0.15);border-radius:var(--r-2);color:var(--danger);font-size:var(--fs-sm);text-align:center;animation:shake 0.4s var(--ease)}
+        .login-footer{margin-top:var(--s-7);text-align:center;font-size:var(--fs-xs);color:var(--text-4);padding-top:var(--s-4);position:relative}
+        .login-footer::before{content:'';position:absolute;top:0;right:20%;left:20%;height:1px;background:linear-gradient(90deg,transparent,var(--border-1),transparent)}
+        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .spinner{animation:spin 0.7s linear infinite}
+        @media(max-width:480px){.login-card{padding:var(--s-7) var(--s-6);margin:var(--s-4)}.login-brand h1{font-size:var(--fs-xl)}}
     </style>
 </head>
 <body>
-
-    <div class="login-card">
-        <h2>Engenheim System</h2>
-        <form onsubmit="handleLogin(event)">
-            <div class="input-group">
-                <label>اسم المستخدم أو الإيميل (Username / Email):</label>
-                <input type="text" id="username" required placeholder="أدخل اسم المستخدم أو الإيميل...">
+<div class="login-wrap">
+    <div class="login-bg"></div>
+    <div class="login-bg-2"></div>
+    <div class="login-card anim-slide-up">
+        <div class="login-brand">
+            <h1>Engenheim</h1>
+            <p>نظام إدارة قسم المبيعات</p>
+        </div>
+        <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="on">
+            <div class="form-group">
+                <label class="form-label" for="username">اسم المستخدم</label>
+                <input class="form-input" type="text" id="username" required placeholder="admin أو emp1" autocomplete="username">
             </div>
-            <div class="input-group">
-                <label>كلمة المرور (Password):</label>
-                <input type="password" id="password" required placeholder="أدخل كلمة المرور...">
+            <div class="form-group">
+                <label class="form-label" for="password">كلمة المرور</label>
+                <input class="form-input" type="password" id="password" required placeholder="أدخل كلمة المرور" autocomplete="current-password">
             </div>
-            <button type="submit" id="submitBtn" class="btn-login">تسجيل الدخول</button>
-            <div id="errorMsg" class="error-msg"></div>
+            <button type="submit" id="submitBtn" class="btn btn-primary w-full" style="height:42px;font-size:var(--fs-base);">
+                <span id="btnText">تسجيل الدخول</span>
+                <span id="btnSpinner" class="hidden" style="display:inline-flex;align-items:center;gap:6px;">
+                    <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-linecap="round"/></svg>
+                    جاري التحقق...
+                </span>
+            </button>
+            <div id="errorMsg" class="login-error hidden"></div>
         </form>
+        <div class="login-footer">Engenheim &copy; 2026. جميع الحقوق محفوظة</div>
     </div>
-
-    <script>
-        async function handleLogin(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
-            const btn = document.getElementById('submitBtn');
-            const errDiv = document.getElementById('errorMsg');
-
-            errDiv.style.display = 'none';
-            btn.disabled = true;
-            btn.textContent = 'جاري التحقق...';
-
-            try {
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: user, password: pass })
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(data.message || 'خطأ في تسجيل الدخول');
-                }
-
-                // Save auth state
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userRole', data.user.role);
-                localStorage.setItem('currentEmpUser', data.user.username);
-                localStorage.setItem('currentEmpName', data.user.name);
-
-                if (data.user.role === 'admin') {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    window.location.href = 'employeedash.html';
-                }
-            } catch (err) {
-                errDiv.textContent = err.message;
-                errDiv.style.display = 'block';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'تسجيل الدخول';
-            }
-        }
-    </script>
+</div>
+<script>
+if(localStorage.getItem('token')){var r=localStorage.getItem('userRole');window.location.href=r==='admin'?'dashboard.html':'employeedash.html';}
+async function handleLogin(e){
+    e.preventDefault();
+    var user=document.getElementById('username').value.trim(),pass=document.getElementById('password').value.trim();
+    var btn=document.getElementById('submitBtn'),txt=document.getElementById('btnText'),spin=document.getElementById('btnSpinner'),err=document.getElementById('errorMsg');
+    err.classList.add('hidden');btn.disabled=true;txt.classList.add('hidden');spin.classList.remove('hidden');
+    try{
+        var res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,password:pass})});
+        var data=await res.json();
+        if(!res.ok) throw new Error(data.message||'بيانات الدخول غير صحيحة');
+        localStorage.setItem('token',data.token);localStorage.setItem('isLoggedIn','true');
+        localStorage.setItem('userRole',data.user.role);localStorage.setItem('currentEmpUser',data.user.username);
+        localStorage.setItem('currentEmpName',data.user.name);
+        window.location.href=data.user.role==='admin'?'dashboard.html':'employeedash.html';
+    }catch(ex){
+        err.textContent=ex.message;err.classList.remove('hidden');
+        document.querySelector('.login-card').classList.add('anim-shake');
+        setTimeout(function(){document.querySelector('.login-card').classList.remove('anim-shake');},500);
+    }finally{btn.disabled=false;txt.classList.remove('hidden');spin.classList.add('hidden');}
+}
+</script>
 </body>
 </html>

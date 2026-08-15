@@ -3,233 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام البحث عن الشركات - Engenheim System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background-color: #0b0f0d; color: #e0e0e0; display: flex; height: 100vh; overflow: hidden; }
-        
-        .sidebar { width: 270px; background-color: #121815; border-left: 1px solid #1f2b24; display: flex; flex-direction: column; }
-        .sidebar-brand { padding: 30px 20px; border-bottom: 1px solid #1f2b24; }
-        .sidebar-brand h1 { color: #00ff66; font-size: 20px; }
-        .sidebar-brand span { font-size: 11.5px; color: #888; }
-        .sidebar-menu { list-style: none; padding: 25px 0; }
-        .sidebar-menu li a { display: block; padding: 14px 25px; color: #a0aec0; text-decoration: none; font-size: 14px; transition: 0.3s; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background-color: #1f2b24; color: #00ff66; border-right: 3px solid #00ff66; }
-
-        .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { height: 75px; background-color: #121815; border-bottom: 1px solid #1f2b24; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
-        .topbar h2 { font-size: 17px; color: #ffffff; }
-        .back-btn { background: #1f2b24; color: #00ff66; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500; border: 1px solid #00ff6633; }
-
-        .content-area { padding: 30px; flex: 1; overflow-y: auto; }
-        
-        .search-container { background: #121815; padding: 20px; border-radius: 10px; border: 1px solid #1f2b24; margin-bottom: 25px; display: flex; gap: 15px; }
-        .search-container input { flex: 1; background: #0b0f0d; border: 1px solid #1f2b24; padding: 12px 18px; border-radius: 6px; color: #fff; font-size: 14px; outline: none; }
-        .search-container input:focus { border-color: #00ff66; }
-        .search-container button { background: #00ff66; color: #0b0f0d; border: none; padding: 0 25px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .search-container button:hover { background: #00cc52; }
-
-        .results-table { width: 100%; background: #121815; border-radius: 10px; border-collapse: collapse; border: 1px solid #1f2b24; overflow: hidden; }
-        .results-table th, .results-table td { padding: 15px 20px; text-align: right; border-bottom: 1px solid #1f2b24; font-size: 13.5px; }
-        .results-table th { background: #18221c; color: #00ff66; font-weight: 700; }
-        .results-table tr:hover { background: #16201a; }
-        
-        .assign-select { background: #0b0f0d; color: #fff; border: 1px solid #1f2b24; padding: 8px 12px; border-radius: 6px; font-size: 12px; outline: none; cursor: pointer; }
-        .assign-btn { background: #00ff66; color: #0b0f0d; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .assign-btn:hover { background: #00cc52; }
-        .badge-source { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-        .source-baghdad { background: #065f46; color: #34d399; }
-        .source-social { background: #1e40af; color: #60a5fa; }
-    </style>
+    <title>البحث عن الشركات | Engenheim</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-
+<div class="page-layout">
     <aside class="sidebar">
-        <div class="sidebar-brand">
-            <h1>Engenheim</h1>
-            <span>لوحة تحكم النظام الموحد</span>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="dashboard.html">الرئيسية</a></li>
-            <li><a href="callcenter.html">الكول سنتر</a></li>
-            <li><a href="search-companies.html" class="active">نظام البحث عن الشركات</a></li>
-        </ul>
+        <div class="sidebar-brand"><h1>Engenheim</h1><p class="subtitle">Sales Management</p></div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html"><i data-lucide="layout-dashboard" class="nav-icon"></i>لوحة التحكم</a>
+            <a href="callcenter.html"><i data-lucide="phone-call" class="nav-icon"></i>الكول سنتر</a>
+            <a href="search-companies.html" class="active"><i data-lucide="search" class="nav-icon"></i>البحث عن شركات</a>
+        </nav>
+        <div class="sidebar-footer">Engenheim &copy; 2026</div>
     </aside>
-
     <div class="main-wrapper">
         <header class="topbar">
-            <h2>نظام البحث الربطي (محرك الشركات الذكي)</h2>
-            <a href="dashboard.html" class="back-btn">العودة للوحة التحكم</a>
-        </header>
-
-        <div class="content-area">
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="ابحث عن أي شركة (مثال: شركة تمور، تقنية، بغداد)..." onkeyup="filterCompanies()">
-                <button onclick="fetchExternalAPIs()">بحث عبر المنصات (API)</button>
+            <h2 class="topbar-title">البحث الذكي عن الشركات</h2>
+            <div class="topbar-actions">
+                <a href="dashboard.html" class="btn btn-ghost">العودة للوحة التحكم</a>
+                <button class="btn btn-logout" onclick="AUTH.logout()"><span>خروج</span></button>
             </div>
-
-            <table class="results-table" id="companiesTable">
-                <thead>
-                    <tr>
-                        <th>اسم الشركة</th>
-                        <th>القطاع / النشاط</th>
-                        <th>رقم الهاتف</th>
-                        <th>العنوان</th>
-                        <th>المصدر</th>
-                        <th>إسناد لموظف</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr id="row-1">
-                        <td><strong>شركة النخيل للتمور العراقية</strong></td>
-                        <td>صناعات غذائية وتجارة</td>
-                        <td>+964 770 123 4567</td>
-                        <td>بغداد - الكرادة</td>
-                        <td><span class="badge-source source-baghdad">دليل بغداد</span></td>
-                        <td>
-                            <select class="assign-select emp-select" id="emp-select-1"></select>
-                            <button class="assign-btn" onclick="assignCompany('شركة النخيل للتمور العراقية', '+9647701234567', 'بغداد - الكرادة', 'emp-select-1', 'row-1')">إسناد وحفظ</button>
-                        </td>
-                    </tr>
-                    <tr id="row-2">
-                        <td><strong>مؤسسة دجلة للتجارة العامة</strong></td>
-                        <td>توريد عام وتسويق</td>
-                        <td>+964 781 987 6543</td>
-                        <td>بغداد - المنصور</td>
-                        <td><span class="badge-source source-social">Instagram API</span></td>
-                        <td>
-                            <select class="assign-select emp-select" id="emp-select-2"></select>
-                            <button class="assign-btn" onclick="assignCompany('مؤسسة دجلة للتجارة العامة', '+9647819876543', 'بغداد - المنصور', 'emp-select-2', 'row-2')">إسناد وحفظ</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        </header>
+        <main class="content-area">
+            <nav class="breadcrumb"><a href="dashboard.html">الرئيسية</a><span class="sep">/</span><span class="current">البحث</span></nav>
+            <div class="section" style="border-top:2px solid var(--accent);text-align:center;padding:var(--s-9) var(--s-7)">
+                <h2 style="font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--text-0);margin-bottom:var(--s-2)">محرك البحث الشامل</h2>
+                <p class="text-muted mb-lg" style="font-size:var(--fs-sm)">ابحث عبر المنصات المختلفة وأسند الشركات مباشرة لفريق المبيعات</p>
+                <div class="flex gap-md items-center" style="max-width:560px;margin:0 auto">
+                    <input class="form-input" type="text" id="searchInput" placeholder="ابحث بالاسم، القطاع، المنطقة..." style="height:42px" onkeyup="filterResults()">
+                    <button class="btn btn-primary" style="height:42px;white-space:nowrap" onclick="fetchAPIs()">بحث</button>
+                </div>
+            </div>
+            <section class="section">
+                <div class="section-header"><h3 class="section-title"><i data-lucide="list"></i>النتائج</h3><span class="text-muted" style="font-size:var(--fs-xs)" id="resultCount"></span></div>
+                <table class="data-table" id="resultsTable">
+                    <thead><tr><th>الشركة</th><th>القطاع</th><th>الهاتف</th><th>العنوان</th><th>المصدر</th><th>إسناد لموظف</th></tr></thead>
+                    <tbody id="resultsBody">
+                        <tr id="row-1" data-search="شركة النخيل للتمور العراقية صناعات غذائية بغداد الكرادة"><td class="fw-semi">شركة النخيل للتمور</td><td class="text-muted">صناعات غذائية</td><td>+964 770 123 4567</td><td>بغداد - الكرادة</td><td><span class="badge badge-deal">دليل العراق</span></td><td><div class="flex gap-xs items-center"><select class="table-select emp-select" id="emp-1"></select><button class="btn btn-primary btn-sm" onclick="assign('شركة النخيل للتمور','+9647701234567','بغداد - الكرادة','emp-1','row-1')">إسناد</button></div></td></tr>
+                        <tr id="row-2" data-search="مؤسسة دجلة للتجارة العامة توريد تسويق بغداد المنصور"><td class="fw-semi">مؤسسة دجلة للتجارة</td><td class="text-muted">توريد وتسويق</td><td>+964 781 987 6543</td><td>بغداد - المنصور</td><td><span class="badge badge-called">Instagram</span></td><td><div class="flex gap-xs items-center"><select class="table-select emp-select" id="emp-2"></select><button class="btn btn-primary btn-sm" onclick="assign('مؤسسة دجلة للتجارة','+9647819876543','بغداد - المنصور','emp-2','row-2')">إسناد</button></div></td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
     </div>
-
-    <script>
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('يرجى تسجيل الدخول أولاً');
-            window.location.href = 'index.html';
-        }
-
-        let employeesList = [];
-
-        async function fetchWithAuth(url, options = {}) {
-            options.headers = {
-                ...options.headers,
-                'Authorization': Bearer 
-            };
-            const res = await fetch(url, options);
-            if (res.status === 401 || res.status === 403) {
-                alert('انتهت الجلسة');
-                window.location.href = 'index.html';
-            }
-            return res;
-        }
-
-        async function initEmployees() {
-            try {
-                const res = await fetchWithAuth('/api/auth/employees');
-                employeesList = await res.json();
-                populateAllSelects();
-            } catch (err) {
-                console.error('Error fetching employees:', err);
-            }
-        }
-
-        function populateAllSelects() {
-            const selects = document.querySelectorAll('.emp-select');
-            selects.forEach(select => {
-                const currentVal = select.value;
-                select.innerHTML = '<option value="">-- اختر موظف --</option>';
-                employeesList.forEach(emp => {
-                    select.innerHTML += <option value=""> ()</option>;
-                });
-                if (currentVal) select.value = currentVal;
-            });
-        }
-
-        function filterCompanies() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.getElementById('tableBody').getElementsByTagName('tr');
-            for (let i = 0; i < rows.length; i++) {
-                const text = rows[i].textContent.toLowerCase();
-                rows[i].style.display = text.includes(input) ? "" : "none";
-            }
-        }
-
-        let customRowCount = 100;
-        function fetchExternalAPIs() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) {
-                alert("يرجى كتابة كلمة مفتاحية للبحث (مثل: تمور، أطعمة، تقنية)");
-                return;
-            }
-            
-            customRowCount++;
-            const rowId = ow-;
-            const selectId = emp-select-;
-
-            const tbody = document.getElementById('tableBody');
-            const newRow = document.createElement('tr');
-            newRow.id = rowId;
-            newRow.innerHTML = 
-                <td><strong> (مستخرجة عبر المنصات)</strong></td>
-                <td>تجارة عامة / إعلان</td>
-                <td>+964 790 555 4433</td>
-                <td>بغداد - الرصافة</td>
-                <td><span class="badge-source source-social">Graph API</span></td>
-                <td>
-                    <select class="assign-select emp-select" id=""></select>
-                    <button class="assign-btn" onclick="assignCompany('', '+9647905554433', 'بغداد - الرصافة', '', '')">إسناد وحفظ</button>
-                </td>
-            ;
-            tbody.prepend(newRow);
-            populateAllSelects();
-            alert("تم جلب أحدث بيانات الشركات المطابقة بنجاح!");
-        }
-
-        async function assignCompany(name, phone, address, selectId, rowId) {
-            const select = document.getElementById(selectId);
-            const agent = select ? select.value : '';
-
-            if (!agent) {
-                alert('يرجى اختيار الموظف أولاً قبل الإسناد!');
-                return;
-            }
-
-            try {
-                const res = await fetchWithAuth('/api/companies', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: name,
-                        phone: phone,
-                        address: address,
-                        agent: agent,
-                        status: 'NoDeal',
-                        callCount: 0
-                    })
-                });
-
-                if (res.ok) {
-                    alert(✅ تم حفظ شركة "" في قاعدة بيانات MongoDB وإسنادها للموظف () بنجاح!);
-                    const row = document.getElementById(rowId);
-                    if (row) {
-                        row.style.backgroundColor = '#17221a';
-                    }
-                } else {
-                    alert('فشل حفظ الشركة');
-                }
-            } catch (err) {
-                alert('حدث خطأ أثناء الاتصال بالسيرفر');
-            }
-        }
-
-        initEmployees();
-    </script>
+</div>
+<script src="app.js"></script>
+<script>
+if(!AUTH.requireAuth()) throw new Error('Denied');
+var emps=[];
+async function init(){
+    try{var r=await AUTH.fetchWithAuth('/api/auth/employees');emps=await r.json();populateSelects();updateCount();if(typeof lucide!=='undefined')lucide.createIcons();}catch(e){console.error(e);}
+}
+function populateSelects(){document.querySelectorAll('.emp-select').forEach(function(s){var v=s.value;s.innerHTML='<option value="">-- اختر الموظف --</option>';emps.forEach(function(e){s.innerHTML+='<option value="'+e.username+'">'+e.name+'</option>';});if(v)s.value=v;});}
+function updateCount(){var vis=document.querySelectorAll('#resultsBody tr:not([style*="display: none"])').length;document.getElementById('resultCount').textContent=vis+' نتيجة';}
+function filterResults(){var q=document.getElementById('searchInput').value.toLowerCase();document.querySelectorAll('#resultsBody tr').forEach(function(r){r.style.display=(r.getAttribute('data-search')||'').includes(q)?'':'none';});updateCount();}
+var rc=100;
+function fetchAPIs(){
+    var q=document.getElementById('searchInput').value.trim();if(!q){showToast('ادخل كلمة البحث','warning');return;}
+    rc++;var rid='row-'+rc,sid='emp-'+rc;
+    var tb=document.getElementById('resultsBody'),row=document.createElement('tr');row.id=rid;row.setAttribute('data-search',q.toLowerCase());row.style.animation='slideUp 0.3s var(--ease)';
+    row.innerHTML='<td class="fw-semi">'+q+'</td><td class="text-muted">نتيجة بحث</td><td>+964 790 555 4433</td><td>العراق</td><td><span class="badge badge-meeting">API</span></td><td><div class="flex gap-xs items-center"><select class="table-select emp-select" id="'+sid+'"></select><button class="btn btn-primary btn-sm" onclick="assign(\''+q+'\',\'+9647905554433\',\'العراق\',\''+sid+'\',\''+rid+'\')">إسناد</button></div></td>';
+    tb.prepend(row);populateSelects();updateCount();showToast('تم جلب النتائج');
+}
+async function assign(name,phone,addr,selId,rowId){
+    var s=document.getElementById(selId),ag=s?s.value:'';if(!ag){showToast('اختر الموظف أولاً','warning');return;}
+    try{var r=await AUTH.fetchWithAuth('/api/companies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,address:addr,agent:ag,status:'NoDeal',callCount:0})});
+    if(r.ok){showToast('تم حفظ '+name+' للموظف '+ag);var row=document.getElementById(rowId);if(row)row.style.background='var(--bg-active)';}else showToast('فشل في الحفظ','error');}catch(e){showToast('خطأ في الاتصال','error');}
+}
+init();
+</script>
 </body>
 </html>
